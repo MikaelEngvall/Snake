@@ -199,6 +199,19 @@ function checkGameOver() {
     }
   }
 }
+// Add event listeners for touch controls
+document
+  .getElementById("upBtn")
+  .addEventListener("click", () => changeDirection({ keyCode: 38 }));
+document
+  .getElementById("downBtn")
+  .addEventListener("click", () => changeDirection({ keyCode: 40 }));
+document
+  .getElementById("leftBtn")
+  .addEventListener("click", () => changeDirection({ keyCode: 37 }));
+document
+  .getElementById("rightBtn")
+  .addEventListener("click", () => changeDirection({ keyCode: 39 }));
 
 function displayGameOver() {
   // Display "Game Over" text in the center of the canvas
