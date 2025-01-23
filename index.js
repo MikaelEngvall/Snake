@@ -26,12 +26,12 @@ pauseBtn.addEventListener("click", () => {
   if (state.paused) {
     // Resume the game
     state.paused = false;
-    pauseBtn.textContent = "⏸ Pause";
+    pauseBtn.textContent = "⏸";
     gameLoop(); // Resume the game loop
   } else {
     // Pause the game
     state.paused = true;
-    pauseBtn.textContent = "▶️ Resume";
+    pauseBtn.textContent = "▶️";
   }
 });
 
