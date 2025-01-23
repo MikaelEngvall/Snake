@@ -1,20 +1,53 @@
+// Selects the HTML canvas element with the id "gameBoard" and assigns it to `gameBoard`.
 const gameBoard = document.querySelector("#gameBoard");
+
+// Gets the 2D rendering context of the canvas for drawing shapes and objects.
 const ctx = gameBoard.getContext("2d");
+
+// Selects the HTML element with the id "scoreText" to display the game score.
 const scoreText = document.querySelector("#scoreText");
+
+// Selects the HTML button element with the id "resetBtn" to reset the game when clicked.
 const resetBtn = document.querySelector("#resetBtn");
+
+// Stores the width of the canvas into the `gameWidth` variable.
 const gameWidth = gameBoard.width;
+
+// Stores the height of the canvas into the `gameHeight` variable.
 const gameHeight = gameBoard.height;
+
+// Sets the background color of the game board.
 const boardBackground = "white";
+
+// Sets the color of the snake.
 const snakeColor = "lightgreen";
+
+// Sets the color of the snake's border.
 const snakeBorder = "black";
+
+// Sets the color of the food.
 const foodColor = "red";
+
+// Defines the size of each unit (grid square) in the game.
 const unitSize = 25;
+
+// Boolean flag to indicate whether the game is currently running.
 let running = false;
+
+// Sets the snake's initial horizontal velocity (moving right by default).
 let xVelocity = unitSize;
+
+// Sets the snake's initial vertical velocity (not moving vertically by default).
 let yVelocity = 0;
+
+// Variables to store the food's x and y coordinates.
 let foodX;
 let foodY;
+
+// Stores the player's score.
 let score = 0;
+
+// Array representing the snake as a list of coordinate objects (x, y positions).
 let snake = [
   { x: unitSize * 4, y: 0 },
   { x: unitSize * 3, y: 0 },
@@ -23,139 +56,38 @@ let snake = [
   { x: 0, y: 0 },
 ];
 
+// Adds an event listener to handle keyboard input for changing the snake's direction.
 window.addEventListener("keydown", changeDirection);
+
+// Adds an event listener to reset the game when the reset button is clicked.
 resetBtn.addEventListener("click", resetGame);
 
+// Starts the game.
 gameStart();
 
+// Initializes the game state and begins the main game loop.
 function gameStart() {
-  running = true;
-  scoreText.textContent = score;
-  createFood();
-  drawFood();
-  nextTick();
+  running = true; // Sets the game state to running.
+  scoreText.textContent = score; // Displays the initial score.
+  createFood(); // Generates the initial food position.
+  drawFood(); // Draws the food on the game board.
+  nextTick(); // Starts the game loop.
 }
+
+// Runs the game loop, which repeatedly updates the game state.
 function nextTick() {
   if (running) {
     setTimeout(() => {
-      clearBoard();
-      drawFood();
-      moveSnake();
-      drawSnake();
-      checkGameOver();
-      nextTick();
-    }, 125);
+      clearBoard(); // Clears the canvas for the next frame.
+      drawFood(); // Draws the food on the board.
+      moveSnake(); // Updates the snake's position.
+      drawSnake(); // Draws the snake on the board.
+      checkGameOver(); // Checks if the game is over.
+      nextTick(); // Calls the next iteration of the game loop.
+    }, 125); // Sets the game loop interval (speed of the snake).
   } else {
-    displayGameOver();
+    displayGameOver(); // Displays the "Game Over" message if the game ends.
   }
 }
-function clearBoard() {
-  ctx.fillStyle = boardBackground;
-  ctx.fillRect(0, 0, gameWidth, gameHeight);
-}
-function createFood() {
-  function randomFood(min, max) {
-    const randNum =
-      Math.round((Math.random() * (max - min) + min) / unitSize) * unitSize;
-    return randNum;
-  }
-  foodX = randomFood(0, gameWidth - unitSize);
-  foodY = randomFood(0, gameWidth - unitSize);
-}
-function drawFood() {
-  ctx.fillStyle = foodColor;
-  ctx.fillRect(foodX, foodY, unitSize, unitSize);
-}
-function moveSnake() {
-  const head = { x: snake[0].x + xVelocity, y: snake[0].y + yVelocity };
 
-  snake.unshift(head);
-  //if food is eaten
-  if (snake[0].x == foodX && snake[0].y == foodY) {
-    score += 1;
-    scoreText.textContent = score;
-    createFood();
-  } else {
-    snake.pop();
-  }
-}
-function drawSnake() {
-  ctx.fillStyle = snakeColor;
-  ctx.strokeStyle = snakeBorder;
-  snake.forEach((snakePart) => {
-    ctx.fillRect(snakePart.x, snakePart.y, unitSize, unitSize);
-    ctx.strokeRect(snakePart.x, snakePart.y, unitSize, unitSize);
-  });
-}
-function changeDirection(event) {
-  const keyPressed = event.keyCode;
-  const LEFT = 37;
-  const UP = 38;
-  const RIGHT = 39;
-  const DOWN = 40;
-
-  const goingUp = yVelocity == -unitSize;
-  const goingDown = yVelocity == unitSize;
-  const goingRight = xVelocity == unitSize;
-  const goingLeft = xVelocity == -unitSize;
-
-  switch (true) {
-    case keyPressed == LEFT && !goingRight:
-      xVelocity = -unitSize;
-      yVelocity = 0;
-      break;
-    case keyPressed == UP && !goingDown:
-      xVelocity = 0;
-      yVelocity = -unitSize;
-      break;
-    case keyPressed == RIGHT && !goingLeft:
-      xVelocity = unitSize;
-      yVelocity = 0;
-      break;
-    case keyPressed == DOWN && !goingUp:
-      xVelocity = 0;
-      yVelocity = unitSize;
-      break;
-  }
-}
-function checkGameOver() {
-  switch (true) {
-    case snake[0].x < 0:
-      running = false;
-      break;
-    case snake[0].x >= gameWidth:
-      running = false;
-      break;
-    case snake[0].y < 0:
-      running = false;
-      break;
-    case snake[0].y >= gameHeight:
-      running = false;
-      break;
-  }
-  for (let i = 1; i < snake.length; i += 1) {
-    if (snake[i].x == snake[0].x && snake[i].y == snake[0].y) {
-      running = false;
-    }
-  }
-}
-function displayGameOver() {
-  ctx.font = "50px MV Boli";
-  ctx.fillStyle = "black";
-  ctx.textAlign = "center";
-  ctx.fillText("GAME OVER!", gameWidth / 2, gameHeight / 2);
-  running = false;
-}
-function resetGame() {
-  score = 0;
-  xVelocity = unitSize;
-  yVelocity = 0;
-  snake = [
-    { x: unitSize * 4, y: 0 },
-    { x: unitSize * 3, y: 0 },
-    { x: unitSize * 2, y: 0 },
-    { x: unitSize, y: 0 },
-    { x: 0, y: 0 },
-  ];
-  gameStart();
-}
+// Clears
