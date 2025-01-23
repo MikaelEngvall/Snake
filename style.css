@@ -1,48 +1,42 @@
-/* Link Bootstrap overrides */
+/* Body Styling */
 body {
-    background-color: #f8f9fa; /* Light gray background for a clean look */
+    background-color: #f8f9fa; /* Light gray background */
     font-family: "Permanent Marker", cursive;
 }
 
+/* Game Container */
 #gameContainer {
-    text-align: center;
-    margin-top: 50px;
-}
-
-#gameBoard {
-    border: 5px solid #343a40; /* Darker border for contrast */
-    border-radius: 10px;
-    background-color: #f0f8ff; /* Light blue background for a playful feel */
-}
-
-#scoreText {
-    font-size: 80px; 
-    color: #ff6347; /* Tomato color to make the score pop */
-    margin: 20px 0;
-}
-
-#resetBtn {
-    font-size: 20px;
-    width: 150px;
-    height: 60px;
-    background-color: #20c997; /* Fun teal background */
-    color: white;
-    border: none;
-    border-radius: 30px;
-    transition: transform 0.2s, background-color 0.3s;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Button shadow */
-}
-
-#resetBtn:hover {
-    background-color: #17a2b8; /* Slightly darker teal on hover */
-    transform: scale(1.1); /* Button enlarges slightly */
-    cursor: pointer;
-}
-/* Touch Controls */
-#controls {
     margin-top: 20px;
 }
 
+/* Game Board Styling */
+#gameBoard {
+    border: 5px solid #343a40; /* Dark border */
+    border-radius: 10px;
+    background-color: #f0f8ff; /* Light blue background */
+}
+
+/* Score Styling */
+#scoreText {
+    font-size: 60px;
+    color: #ff6347; /* Tomato color for score */
+}
+
+/* Reset Button Styling */
+#resetBtn {
+    font-size: 18px;
+    padding: 10px 20px;
+    border-radius: 15px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s, background-color 0.3s;
+}
+
+#resetBtn:hover {
+    transform: scale(1.1);
+    background-color: #17a2b8;
+}
+
+/* Direction Controls */
 .control-btn {
     width: 60px;
     height: 60px;
@@ -53,5 +47,5 @@ body {
 }
 
 .control-btn:active {
-    transform: scale(0.9); /* Slightly shrink button when pressed */
+    transform: scale(0.9);
 }
