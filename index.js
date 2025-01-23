@@ -1,53 +1,41 @@
-// Selects the HTML canvas element with the id "gameBoard" and assigns it to `gameBoard`.
+// Select the game board canvas element from the DOM
 const gameBoard = document.querySelector("#gameBoard");
 
-// Gets the 2D rendering context of the canvas for drawing shapes and objects.
+// Get the 2D rendering context for drawing on the canvas
 const ctx = gameBoard.getContext("2d");
 
-// Selects the HTML element with the id "scoreText" to display the game score.
+// Select the score display element from the DOM
 const scoreText = document.querySelector("#scoreText");
 
-// Selects the HTML button element with the id "resetBtn" to reset the game when clicked.
+// Select the reset button element from the DOM
 const resetBtn = document.querySelector("#resetBtn");
 
-// Stores the width of the canvas into the `gameWidth` variable.
+// Get the width and height of the game board canvas
 const gameWidth = gameBoard.width;
-
-// Stores the height of the canvas into the `gameHeight` variable.
 const gameHeight = gameBoard.height;
 
-// Sets the background color of the game board.
+// Define the background color of the game board
 const boardBackground = "white";
 
-// Sets the color of the snake.
+// Define the snake's body color and border color
 const snakeColor = "lightgreen";
-
-// Sets the color of the snake's border.
 const snakeBorder = "black";
 
-// Sets the color of the food.
+// Define the food color
 const foodColor = "red";
 
-// Defines the size of each unit (grid square) in the game.
+// Define the size of one unit (used for snake and food dimensions)
 const unitSize = 25;
 
-// Boolean flag to indicate whether the game is currently running.
-let running = false;
+// Initialize game state variables
+let running = false; // Indicates if the game is running
+let xVelocity = unitSize; // Snake's horizontal movement velocity
+let yVelocity = 0; // Snake's vertical movement velocity
+let foodX; // X-coordinate of the food
+let foodY; // Y-coordinate of the food
+let score = 0; // Current score
 
-// Sets the snake's initial horizontal velocity (moving right by default).
-let xVelocity = unitSize;
-
-// Sets the snake's initial vertical velocity (not moving vertically by default).
-let yVelocity = 0;
-
-// Variables to store the food's x and y coordinates.
-let foodX;
-let foodY;
-
-// Stores the player's score.
-let score = 0;
-
-// Array representing the snake as a list of coordinate objects (x, y positions).
+// Define the initial snake body as an array of segments
 let snake = [
   { x: unitSize * 4, y: 0 },
   { x: unitSize * 3, y: 0 },
@@ -56,38 +44,182 @@ let snake = [
   { x: 0, y: 0 },
 ];
 
-// Adds an event listener to handle keyboard input for changing the snake's direction.
+// Add an event listener to capture keydown events for changing snake direction
 window.addEventListener("keydown", changeDirection);
 
-// Adds an event listener to reset the game when the reset button is clicked.
+// Add a click event listener to the reset button for restarting the game
 resetBtn.addEventListener("click", resetGame);
 
-// Starts the game.
+// Start the game
 gameStart();
 
-// Initializes the game state and begins the main game loop.
 function gameStart() {
-  running = true; // Sets the game state to running.
-  scoreText.textContent = score; // Displays the initial score.
-  createFood(); // Generates the initial food position.
-  drawFood(); // Draws the food on the game board.
-  nextTick(); // Starts the game loop.
+  // Set the game state to running
+  running = true;
+
+  // Display the initial score
+  scoreText.textContent = score;
+
+  // Generate a random position for the food
+  createFood();
+
+  // Draw the food on the canvas
+  drawFood();
+
+  // Start the game loop
+  nextTick();
 }
 
-// Runs the game loop, which repeatedly updates the game state.
 function nextTick() {
+  // Continue the game loop if the game is running
   if (running) {
     setTimeout(() => {
-      clearBoard(); // Clears the canvas for the next frame.
-      drawFood(); // Draws the food on the board.
-      moveSnake(); // Updates the snake's position.
-      drawSnake(); // Draws the snake on the board.
-      checkGameOver(); // Checks if the game is over.
-      nextTick(); // Calls the next iteration of the game loop.
-    }, 125); // Sets the game loop interval (speed of the snake).
+      clearBoard(); // Clear the canvas
+      drawFood(); // Redraw the food
+      moveSnake(); // Update the snake's position
+      drawSnake(); // Redraw the snake
+      checkGameOver(); // Check if the game is over
+      nextTick(); // Repeat the loop
+    }, 125); // Set the game speed (125ms per frame)
   } else {
-    displayGameOver(); // Displays the "Game Over" message if the game ends.
+    // Display "Game Over" if the game is no longer running
+    displayGameOver();
   }
 }
 
-// Clears
+function clearBoard() {
+  // Fill the entire canvas with the background color to clear it
+  ctx.fillStyle = boardBackground;
+  ctx.fillRect(0, 0, gameWidth, gameHeight);
+}
+
+function createFood() {
+  // Generate a random coordinate for the food within the board boundaries
+  function randomFood(min, max) {
+    const randNum =
+      Math.round((Math.random() * (max - min) + min) / unitSize) * unitSize;
+    return randNum;
+  }
+  foodX = randomFood(0, gameWidth - unitSize); // Random X-coordinate
+  foodY = randomFood(0, gameWidth - unitSize); // Random Y-coordinate
+}
+
+function drawFood() {
+  // Draw the food on the canvas as a red square
+  ctx.fillStyle = foodColor;
+  ctx.fillRect(foodX, foodY, unitSize, unitSize);
+}
+
+function moveSnake() {
+  // Create a new head based on the snake's velocity
+  const head = { x: snake[0].x + xVelocity, y: snake[0].y + yVelocity };
+
+  // Add the new head to the beginning of the snake array
+  snake.unshift(head);
+
+  // Check if the snake has eaten the food
+  if (snake[0].x == foodX && snake[0].y == foodY) {
+    score += 1; // Increment the score
+    scoreText.textContent = score; // Update the score display
+    createFood(); // Generate new food
+  } else {
+    // Remove the last segment of the snake to maintain its length
+    snake.pop();
+  }
+}
+
+function drawSnake() {
+  // Draw each segment of the snake
+  ctx.fillStyle = snakeColor; // Set snake body color
+  ctx.strokeStyle = snakeBorder; // Set snake border color
+  snake.forEach((snakePart) => {
+    ctx.fillRect(snakePart.x, snakePart.y, unitSize, unitSize); // Draw body
+    ctx.strokeRect(snakePart.x, snakePart.y, unitSize, unitSize); // Draw border
+  });
+}
+
+function changeDirection(event) {
+  // Capture the key code of the pressed key
+  const keyPressed = event.keyCode;
+
+  // Define key codes for arrow keys
+  const LEFT = 37;
+  const UP = 38;
+  const RIGHT = 39;
+  const DOWN = 40;
+
+  // Determine the snake's current direction
+  const goingUp = yVelocity == -unitSize;
+  const goingDown = yVelocity == unitSize;
+  const goingRight = xVelocity == unitSize;
+  const goingLeft = xVelocity == -unitSize;
+
+  // Change the snake's direction based on the key pressed, preventing reversal
+  switch (true) {
+    case keyPressed == LEFT && !goingRight:
+      xVelocity = -unitSize;
+      yVelocity = 0;
+      break;
+    case keyPressed == UP && !goingDown:
+      xVelocity = 0;
+      yVelocity = -unitSize;
+      break;
+    case keyPressed == RIGHT && !goingLeft:
+      xVelocity = unitSize;
+      yVelocity = 0;
+      break;
+    case keyPressed == DOWN && !goingUp:
+      xVelocity = 0;
+      yVelocity = unitSize;
+      break;
+  }
+}
+
+function checkGameOver() {
+  // Check if the snake collides with the wall
+  switch (true) {
+    case snake[0].x < 0:
+      running = false;
+      break;
+    case snake[0].x >= gameWidth:
+      running = false;
+      break;
+    case snake[0].y < 0:
+      running = false;
+      break;
+    case snake[0].y >= gameHeight:
+      running = false;
+      break;
+  }
+
+  // Check if the snake collides with itself
+  for (let i = 1; i < snake.length; i += 1) {
+    if (snake[i].x == snake[0].x && snake[i].y == snake[0].y) {
+      running = false;
+    }
+  }
+}
+
+function displayGameOver() {
+  // Display "Game Over" text in the center of the canvas
+  ctx.font = "50px MV Boli";
+  ctx.fillStyle = "black";
+  ctx.textAlign = "center";
+  ctx.fillText("GAME OVER!", gameWidth / 2, gameHeight / 2);
+  running = false; // Stop the game
+}
+
+function resetGame() {
+  // Reset game variables to their initial state
+  score = 0;
+  xVelocity = unitSize;
+  yVelocity = 0;
+  snake = [
+    { x: unitSize * 4, y: 0 },
+    { x: unitSize * 3, y: 0 },
+    { x: unitSize * 2, y: 0 },
+    { x: unitSize, y: 0 },
+    { x: 0, y: 0 },
+  ];
+  gameStart(); // Restart the game
+}
