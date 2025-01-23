@@ -1,19 +1,40 @@
-#gameContainer{
+/* Link Bootstrap overrides */
+body {
+    background-color: #f8f9fa; /* Light gray background for a clean look */
+    font-family: "Permanent Marker", cursive;
+}
+
+#gameContainer {
     text-align: center;
+    margin-top: 50px;
 }
-#gameBoard{
-    border: 3px solid;
+
+#gameBoard {
+    border: 5px solid #343a40; /* Darker border for contrast */
+    border-radius: 10px;
+    background-color: #f0f8ff; /* Light blue background for a playful feel */
 }
-#scoreText{
-    font-family: "Permanent Marker", cursive;
-    font-size: 100px;
+
+#scoreText {
+    font-size: 80px; 
+    color: #ff6347; /* Tomato color to make the score pop */
+    margin: 20px 0;
 }
-#resetBtn{
-    font-family: "Permanent Marker", cursive;
-    font-size: 22px;
-    width: 100px;
-    height: 50px;
-    border: 4px solid;
-    border-radius: 15px;
+
+#resetBtn {
+    font-size: 20px;
+    width: 150px;
+    height: 60px;
+    background-color: #20c997; /* Fun teal background */
+    color: white;
+    border: none;
+    border-radius: 30px;
+    transition: transform 0.2s, background-color 0.3s;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); /* Button shadow */
+}
+
+#resetBtn:hover {
+    background-color: #17a2b8; /* Slightly darker teal on hover */
+    transform: scale(1.1); /* Button enlarges slightly */
     cursor: pointer;
 }
